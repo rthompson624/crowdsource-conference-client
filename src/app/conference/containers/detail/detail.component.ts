@@ -1,7 +1,7 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { Observable } from 'rxjs';
-import { switchMap } from 'rxjs/operators';
+import { Observable, Subject } from 'rxjs';
+import { switchMap, takeUntil } from 'rxjs/operators';
 
 import { ConferenceService } from '../../../core/services/conference.service';
 import { Conference } from '../../../core/models/conference.model';
@@ -11,8 +11,9 @@ import { Conference } from '../../../core/models/conference.model';
   templateUrl: './detail.component.html',
   styleUrls: ['./detail.component.css']
 })
-export class DetailComponent implements OnInit {
+export class DetailComponent implements OnInit, OnDestroy {
   conference$: Observable<Conference>;
+  private ngUnsubscribe = new Subject();
   id: number;
 
   constructor(
@@ -31,14 +32,19 @@ export class DetailComponent implements OnInit {
     );
   }
 
+  ngOnDestroy() {
+    this.ngUnsubscribe.next();
+    this.ngUnsubscribe.complete();
+  }
+
   editConference(conference: Conference): void {
     this.router.navigate(['/', 'conferences', String(conference.id), 'edit']);
   }
 
   deleteConference(conference: Conference): void {
-    // TODO: Confirm with dialog, then delete and navigate to list page
-    console.log('Need to delete:');
-    console.log(conference);
+    this.conferenceService.delete(conference).pipe(takeUntil(this.ngUnsubscribe)).subscribe(() => {
+      this.router.navigate(['/', 'conferences']);
+    });
   }
 
 }

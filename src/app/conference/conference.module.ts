@@ -3,22 +3,25 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import {
   MatButtonModule, MatFormFieldModule, MatIconModule, MatInputModule, 
-  MatProgressSpinnerModule, MatListModule, MatCardModule
+  MatProgressSpinnerModule, MatListModule, MatCardModule, MatDialogModule
 } from '@angular/material';
 
 import { ConferenceRoutingModule } from './conference-routing.module';
 import { SharedModule } from '../shared/shared.module';
 
 import { ListComponent } from './containers/list/list.component';
-import { ConferenceListComponent } from './components/conference-list/conference-list.component';
-import { ConferenceDetailComponent } from './components/conference-detail/conference-detail.component';
 import { DetailComponent } from './containers/detail/detail.component';
-import { ConferenceEditorComponent } from './components/conference-editor/conference-editor.component';
 import { CreateComponent } from './containers/create/create.component';
 import { EditComponent } from './containers/edit/edit.component';
+import { ConferenceListComponent } from './components/conference-list/conference-list.component';
+import { ConferenceDetailComponent } from './components/conference-detail/conference-detail.component';
+import { ConferenceEditorComponent } from './components/conference-editor/conference-editor.component';
+import { DeleteDialogComponent } from './components/delete-dialog/delete-dialog.component';
 
 @NgModule({
-  entryComponents: [],
+  entryComponents: [
+    DeleteDialogComponent
+  ],
   imports: [
     CommonModule,
     ConferenceRoutingModule,
@@ -30,7 +33,8 @@ import { EditComponent } from './containers/edit/edit.component';
     MatListModule,
     MatCardModule,
     ReactiveFormsModule,
-    SharedModule
+    SharedModule,
+    MatDialogModule
   ],
   declarations: [
     ListComponent,
@@ -39,7 +43,8 @@ import { EditComponent } from './containers/edit/edit.component';
     DetailComponent,
     ConferenceEditorComponent,
     CreateComponent,
-    EditComponent
+    EditComponent,
+    DeleteDialogComponent
   ]
 })
 export class ConferenceModule {
