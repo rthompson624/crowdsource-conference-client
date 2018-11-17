@@ -3,7 +3,8 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import {
   MatButtonModule, MatFormFieldModule, MatIconModule, MatInputModule, 
-  MatProgressSpinnerModule, MatListModule, MatCardModule, MatDialogModule
+  MatProgressSpinnerModule, MatTableModule, MatCardModule, MatDialogModule,
+  MatPaginatorModule
 } from '@angular/material';
 
 import { ConferenceRoutingModule } from './conference-routing.module';
@@ -30,11 +31,12 @@ import { DeleteDialogComponent } from './components/delete-dialog/delete-dialog.
     MatIconModule,
     MatInputModule,
     MatProgressSpinnerModule,
-    MatListModule,
+    MatTableModule,
     MatCardModule,
     ReactiveFormsModule,
     SharedModule,
-    MatDialogModule
+    MatDialogModule,
+    MatPaginatorModule
   ],
   declarations: [
     ListComponent,

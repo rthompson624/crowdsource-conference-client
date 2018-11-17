@@ -1,20 +1,20 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { map } from 'rxjs/operators';
 
 import { CoreModule } from '../core.module';
 import { AuthenticationService } from './authentication.service';
-import { ApiEnvelope } from '../models/api-envelope.model';
+import { Multiple } from '../models/multiple.model';
 import { Conference } from '../models/conference.model';
 import { environment } from '../../../environments/environment';
+import { AppConfiguration } from '../../../configuration/configuration';
 
 @Injectable({
   providedIn: CoreModule
 })
 export class ConferenceService {
   private confUrl: string = 'http://' + environment.restApiDomain + '/conferences';
-  private pageSize: number = environment.apiPageSize;
+  private pageSize: number = AppConfiguration.apiPageSize;
 
   constructor(
     private httpClient: HttpClient,
@@ -52,24 +52,22 @@ export class ConferenceService {
     return this.httpClient.get<Conference>(this.confUrl + '/' + id, options);
   }
 
-  getMany(page: number, hostId?: number): Observable<Conference[]> {
+  getMany(page: number, hostId?: number): Observable<Multiple<Conference>> {
     const headers = new HttpHeaders().set('Authorization', this.authService.getAccessToken());
-    const skip = (page * this.pageSize) - this.pageSize;
+    const skip = (page * this.pageSize);
     let params: HttpParams;
     if (hostId) {
       params = new HttpParams()
         .set('$skip', skip.toString(10))
+        .set('$limit', this.pageSize.toString(10))
         .set('host_id', String(hostId));
     } else {
       params = new HttpParams()
-        .set('$skip', skip.toString(10));
+        .set('$skip', skip.toString(10))
+        .set('$limit', this.pageSize.toString(10));
     }
     const options = {headers: headers, params: params};
-    return this.httpClient.get<ApiEnvelope<Conference>>(this.confUrl, options).pipe(
-      map(response => {
-        return response.data;
-      })
-    );
+    return this.httpClient.get<Multiple<Conference>>(this.confUrl, options);
   }
 
   delete(conference: Conference): Observable<void> {

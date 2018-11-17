@@ -4,8 +4,7 @@
 
 export const environment = {
   production: false,
-  restApiDomain: 'localhost:3030',
-  apiPageSize: 10
+  restApiDomain: 'localhost:3030'
 };
 
 /*

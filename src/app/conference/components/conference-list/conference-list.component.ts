@@ -1,4 +1,6 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
+import { PageEvent } from '@angular/material';
+import { Multiple } from '../../../core/models/multiple.model';
 import { Conference } from '../../../core/models/conference.model';
 
 @Component({
@@ -7,11 +9,27 @@ import { Conference } from '../../../core/models/conference.model';
   styleUrls: ['./conference-list.component.css']
 })
 export class ConferenceListComponent implements OnInit {
-  @Input() conferences: Conference[];
+  @Input() conferences: Multiple<Conference>;
+  @Input() displayedColumns: string[];
+  @Output() clickRow = new EventEmitter<Conference>();
+  @Output() load = new EventEmitter<PageEvent>();
 
   constructor() { }
 
   ngOnInit() {
+  }
+
+  rowClick(conference: Conference) {
+    this.clickRow.emit(conference);
+  }
+
+  onPageEvent(event: PageEvent) {
+    this.load.emit(event);
+  }
+
+  formatDate(value: string): string {
+    const date = new Date(value);
+    return date.toDateString();
   }
 
 }

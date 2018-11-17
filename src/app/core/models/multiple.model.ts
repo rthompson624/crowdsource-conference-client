@@ -1,4 +1,4 @@
-export interface ApiEnvelope<T> {
+export interface Multiple<T> {
   total: number;
   limit: number;
   skip: number;

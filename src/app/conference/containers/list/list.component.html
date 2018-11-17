@@ -1,5 +1,7 @@
 <app-main-layout>
   <div class="page-title">Conferences</div>
   <a routerLink="create" routerLinkActive="active">Create new conference</a>
-  <app-conference-list [conferences]="conferences$ | async"></app-conference-list>
+  <br />
+  <br />
+  <app-conference-list [conferences]="conferences$ | async" [displayedColumns]="columns" (clickRow)="selectConference($event)" (load)="onLoad($event)"></app-conference-list>
 </app-main-layout>
