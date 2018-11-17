@@ -1,0 +1,11 @@
+<form *ngIf="conference" [formGroup]="conferenceForm" (ngSubmit)="onSubmit()">
+  <mat-form-field>
+    <input matInput placeholder="Name" formControlName="name" width="100%">
+  </mat-form-field>
+  <br />
+  <div class="row">
+    <button type="submit" [disabled]="!conferenceForm.valid" mat-raised-button color="primary">Save</button>
+  </div>
+  <br />
+  <div *ngIf="!conferenceForm.valid || errorMessage" class="error-message">{{ errorMessage }}</div>
+</form>  

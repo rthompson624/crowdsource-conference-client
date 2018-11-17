@@ -1,0 +1,14 @@
+.row {  
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.spacer {
+  padding-left: 10px;
+  padding-right: 10px;
+}
+
+.error-message {
+  color: red;
+  padding-top: 10px;
+}

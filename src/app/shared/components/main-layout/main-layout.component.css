@@ -1,0 +1,71 @@
+* {
+  box-sizing: border-box;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  margin: 0px;
+}
+
+.sticky-toolbar {
+  width: 100%;
+  position: fixed;
+  top: 0px;
+  z-index: 500;
+}
+
+.header {
+  padding: 5px;
+  text-align: center;
+  background: #3f51b5;
+  color: white;
+}
+
+.navbar {
+  display: flex;
+  background-color: cornflowerblue;
+}
+
+.navbar-left {
+  flex-grow: 2;
+  display: flex;
+  justify-content: flex-start;
+}
+
+.navbar-right {
+  flex-grow: 1;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.navbar a {
+  color: white;
+  padding: 5px 10px 5px 10px;
+  text-decoration: none;
+  text-align: center;
+}
+
+.navbar a:hover {
+  background-color: lightblue;
+  color: #3f51b5;
+}
+
+a:hover {
+  cursor: pointer;
+}
+
+.main {
+  margin: 66px 0 0 0;
+  padding: 10px;
+}
+
+.site-title {
+  color: white;
+  text-decoration-line: none;
+}
+
+/* Responsive layout - when the screen is less than 700px wide, make the two columns stack on top of each other instead of next to each other */
+@media screen and (max-width: 700px) {
+  .row {   
+      flex-direction: column;
+  }
+}

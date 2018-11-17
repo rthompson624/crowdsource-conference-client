@@ -1,3 +1,5 @@
 export const environment = {
-  production: true
+  production: true,
+  restApiDomain: 'TODO:',
+  apiPageSize: 10
 };

@@ -1,0 +1,29 @@
+<app-main-layout>
+  <div class="page-title">Login</div>
+  <br />
+  <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+    <mat-form-field>
+      <input matInput placeholder="Email" formControlName="email">
+    </mat-form-field>
+    <br />
+    <mat-form-field>
+      <input type="password" matInput placeholder="Password" formControlName="password">
+    </mat-form-field>
+    <br />
+    <div class="row">
+      <button type="submit" [disabled]="!loginForm.valid" mat-raised-button color="primary">Submit</button>
+      <div class="spacer"></div>
+      <mat-spinner *ngIf="showSpinner" [diameter]="40"></mat-spinner>
+    </div>
+    <br />
+    <div *ngIf="authenticationFailed" class="error-message">{{ errorMessage }}</div>
+  </form>
+  <br />
+  <div>
+    Don't have an account? <a routerLink="../create" routerLinkActive="active">Click here.</a>
+  </div>
+  <br />
+  <div>
+    Forgot your password? <a routerLink="../forgot-password" routerLinkActive="active">Click here.</a>
+  </div>
+</app-main-layout>

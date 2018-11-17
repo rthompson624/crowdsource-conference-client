@@ -1,0 +1,23 @@
+<!-- Sticky Toolbar -->
+<div class="sticky-toolbar">
+  <!-- Header -->
+  <div class="header">
+    <h2><a routerLink="/" routerLinkActive="active" class="site-title">Conference DIY</a></h2>
+  </div>
+  <!-- Navigation Bar -->
+  <div class="navbar">
+    <div class="navbar-left">
+      <a *ngIf="isAuthenticated" routerLink="/conferences" routerLinkActive="active">Conferences</a>
+      <a *ngIf="isAuthenticated" routerLink="/venues" routerLinkActive="active">Venues</a>
+    </div>
+    <div class="navbar-right">
+      <a *ngIf="!isAuthenticated" routerLink="/authentication/login" routerLinkActive="active">Login</a>
+      <a *ngIf="isAuthenticated" (click)="onLogout()">Logout</a>
+    </div>
+  </div>
+</div>
+
+<!-- Content -->
+<div class="main">
+  <ng-content></ng-content>
+</div>

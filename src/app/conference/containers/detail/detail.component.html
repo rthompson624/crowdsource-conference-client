@@ -1,0 +1,4 @@
+<app-main-layout>
+  <app-conference-detail [conference]="conference$ | async" (clickEdit)="editConference($event)" (clickDelete)="deleteConference($event)"></app-conference-detail>
+  <br />
+</app-main-layout>
