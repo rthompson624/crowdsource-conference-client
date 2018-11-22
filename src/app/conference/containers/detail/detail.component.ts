@@ -18,13 +18,13 @@ export class DetailComponent implements OnInit, OnDestroy {
 
   constructor(
     private conferenceService: ConferenceService,
-    private activatedRoute: ActivatedRoute,
+    private route: ActivatedRoute,
     private router: Router
   ) {
   }
 
   ngOnInit() {
-    this.conference$ = this.activatedRoute.paramMap.pipe(
+    this.conference$ = this.route.paramMap.pipe(
       switchMap(paramMap => {
         this.id = parseInt(paramMap.get('id'));
         return this.conferenceService.getOne(parseInt(paramMap.get('id')));
@@ -37,13 +37,13 @@ export class DetailComponent implements OnInit, OnDestroy {
     this.ngUnsubscribe.complete();
   }
 
-  editConference(conference: Conference): void {
-    this.router.navigate(['/', 'conferences', String(conference.id), 'edit']);
+  editConference(): void {
+    this.router.navigate(['edit'], {relativeTo: this.route});
   }
 
   deleteConference(conference: Conference): void {
     this.conferenceService.delete(conference).pipe(takeUntil(this.ngUnsubscribe)).subscribe(() => {
-      this.router.navigate(['/', 'conferences']);
+      this.router.navigate(['../'], {relativeTo: this.route});
     });
   }
 

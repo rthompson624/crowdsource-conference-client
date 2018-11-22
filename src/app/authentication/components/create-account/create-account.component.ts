@@ -68,7 +68,7 @@ export class CreateAccountComponent implements OnInit, OnDestroy {
         this.authService.authenticateUser(authReq).pipe(takeUntil(this.ngUnsubscribe)).subscribe(authRes => {
           // Authentication successfull
           this.showSpinner = false;
-          this.router.navigate(['/']);
+          this.router.navigate(['/', 'conferences']);
         },
         err => {
           // Authentication failed

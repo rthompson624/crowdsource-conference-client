@@ -1,5 +1,5 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
-import { Router } from '@angular/router';
+import { Router, ActivatedRoute } from '@angular/router';
 import { takeUntil } from 'rxjs/operators';
 import { Subject } from 'rxjs';
 
@@ -18,7 +18,8 @@ export class CreateComponent implements OnInit, OnDestroy {
 
   constructor(
     private conferenceService: ConferenceService,
-    private router: Router
+    private router: Router,
+    private route: ActivatedRoute
   ) {
   }
 
@@ -34,7 +35,7 @@ export class CreateComponent implements OnInit, OnDestroy {
   onSave(conference: Conference): void {
     this.conference = conference;
     this.conferenceService.create(conference).pipe(takeUntil(this.ngUnsubscribe)).subscribe(conference => {
-      this.router.navigate(['/', 'conferences', conference.id.toString(10)]);
+      this.router.navigate(['../', conference.id.toString(10)], {relativeTo: this.route});
     },
     err => {
       this.errMessage = 'Error creating conference. ' + err;

@@ -19,13 +19,13 @@ export class EditComponent implements OnInit, OnDestroy {
 
   constructor(
     private conferenceService: ConferenceService,
-    private activatedRoute: ActivatedRoute,
+    private route: ActivatedRoute,
     private router: Router
   ) {
   }
 
   ngOnInit() {
-    this.conference$ = this.activatedRoute.paramMap.pipe(
+    this.conference$ = this.route.paramMap.pipe(
       switchMap(
         paramMap => this.conferenceService.getOne(parseInt(paramMap.get('id')))
       )
@@ -39,7 +39,7 @@ export class EditComponent implements OnInit, OnDestroy {
 
   onSave(conference: Conference): void {
     this.conferenceService.update(conference).pipe(takeUntil(this.ngUnsubscribe)).subscribe(updated => {
-      this.router.navigate(['/', 'conferences', updated.id.toString(10)]);
+      this.router.navigate(['../'], {relativeTo: this.route});
     });
   }
 
