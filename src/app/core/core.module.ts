@@ -1,10 +1,7 @@
 import { ModuleWithProviders, NgModule, Optional, SkipSelf } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { HttpClientModule } from '@angular/common/http';
-
-import { AuthenticationService } from './services/authentication.service';
-import { UserService } from './services/user.service';
-import { ConferenceService } from './services/conference.service';
+import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
+import { SecurityInterceptor } from './services/security.interceptor';
 
 @NgModule({
   imports: [
@@ -12,7 +9,13 @@ import { ConferenceService } from './services/conference.service';
     HttpClientModule
   ],
   declarations: [],
-  providers: []
+  providers: [
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: SecurityInterceptor,
+      multi: true
+    }
+  ]
 })
 export class CoreModule {
 

@@ -1,0 +1,25 @@
+{
+  "name": "BadRequest",
+  "message": "Validation error",
+  "code": 400,
+  "className": "bad-request",
+  "errors": [
+    {
+      "message": "email must be unique",
+      "type": "unique violation",
+      "path": "email",
+      "value": "mcuban@mavericks.com",
+      "origin": "DB",
+      "instance": {
+        "id": null,
+        "email": "mcuban@mavericks.com",
+        "password": "$2a$13$ZBeIecSgYm3gTifX1aJRy.g22Cyiv2vNjU5.5X.8n/dv.hyugioMi",
+        "updatedAt": "2018-12-08T16:26:20.403Z",
+        "createdAt": "2018-12-08T16:26:20.403Z"
+      },
+      "validatorKey": "not_unique",
+      "validatorName": null,
+      "validatorArgs": []
+    }
+  ]
+}

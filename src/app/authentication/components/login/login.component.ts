@@ -1,11 +1,12 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
+import { Store } from '@ngrx/store';
+import { Actions, ofType } from '@ngrx/effects';
 import { takeUntil } from 'rxjs/operators';
-import { Subject } from 'rxjs';
+import { Subject, Observable } from 'rxjs';
 
-import { AuthenticationService } from '../../../core/services/authentication.service';
-import { AuthRequest } from '../../../core/models/auth-request.model';
+import { RootStoreState, AuthenticationStoreActions, AuthenticationStoreSelectors } from '../../../root-store';
 
 @Component({
   selector: 'app-login',
@@ -14,52 +15,46 @@ import { AuthRequest } from '../../../core/models/auth-request.model';
 })
 export class LoginComponent implements OnInit, OnDestroy {
   loginForm: FormGroup;
-  showSpinner: boolean = false;
-  authenticationFailed: boolean = false;
-  errorMessage: string;
-  private ngUnsubscribe = new Subject();
+  isLoading$: Observable<boolean>;
+  error$: Observable<string>;
+  private ngUnsubscribe = new Subject<boolean>();
 
   constructor(
     private fb: FormBuilder,
-    private authService: AuthenticationService,
-    private router: Router
-  ) { }
+    private router: Router,
+    private store$: Store<RootStoreState.State>,
+    private actions$: Actions
+  ) {
+  }
 
   ngOnInit() {
     this.createLoginForm();
+    this.registerListeners();
+    this.isLoading$ = this.store$.select(AuthenticationStoreSelectors.selectIsLoading);
+    this.error$ = this.store$.select(AuthenticationStoreSelectors.selectError);
   }
 
   ngOnDestroy() {
-    this.ngUnsubscribe.next();
+    this.ngUnsubscribe.next(true);
     this.ngUnsubscribe.complete();
   }
 
   onSubmit(): void {
-    this.errorMessage = '';
-    this.authenticationFailed = false;
-    this.showSpinner = true;
-    const email = this.loginForm.controls['email'];
-    const password = this.loginForm.controls['password'];
-    const authReq: AuthRequest = {
-      strategy: 'local',
-      email: email.value,
-      password: password.value
-    };
-    this.authService.authenticateUser(authReq).pipe(takeUntil(this.ngUnsubscribe)).subscribe(authRes => {
-      // Authentication successfull
-      this.showSpinner = false;
+    const email = <string>this.loginForm.controls['email'].value;
+    const password = <string>this.loginForm.controls['password'].value;
+    this.store$.dispatch(new AuthenticationStoreActions.LoginRequestAction({
+      email: email,
+      password: password
+    }));
+  }
+
+  registerListeners(): void {
+    // Subscribe to LOGIN_SUCCESS action
+    this.actions$.pipe(
+      ofType<AuthenticationStoreActions.LoginSuccessAction>(AuthenticationStoreActions.ActionTypes.LOGIN_SUCCESS),
+      takeUntil(this.ngUnsubscribe)
+    ).subscribe(action => {
       this.router.navigate(['/', 'conferences']);
-    },
-    err => {
-      // Authentication failed
-      if (err.error.message === 'Invalid login') {
-        this.errorMessage = 'No account exists for the email and password entered.'
-      } else {
-        this.errorMessage = err.error.message;
-        console.log(err);
-      }
-      this.showSpinner = false;
-      this.authenticationFailed = true;
     });
   }
 

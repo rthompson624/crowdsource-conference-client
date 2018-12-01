@@ -3,5 +3,11 @@
   <a routerLink="create" routerLinkActive="active">Create new conference</a>
   <br />
   <br />
-  <app-conference-list [conferences]="conferences$ | async" [displayedColumns]="columns" (clickRow)="selectConference($event)" (load)="onLoad($event)"></app-conference-list>
+  <app-conference-list
+    [conferences]="conferences$ | async"
+    [pageInfo]="page$ | async"
+    [displayedColumns]="columns"
+    (clickRow)="selectConference($event)"
+    (load)="onLoad($event)">
+  </app-conference-list>
 </app-main-layout>

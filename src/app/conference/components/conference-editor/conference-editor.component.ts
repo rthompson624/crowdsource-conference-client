@@ -1,10 +1,11 @@
-import { Component, OnInit, Output, EventEmitter, Input, OnChanges } from '@angular/core';
+import { Component, OnInit, Output, EventEmitter, Input, OnChanges, ChangeDetectionStrategy } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 
 import { Conference } from '../../../core/models/conference.model';
 
 @Component({
   selector: 'app-conference-editor',
+  changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './conference-editor.component.html',
   styleUrls: ['./conference-editor.component.css']
 })

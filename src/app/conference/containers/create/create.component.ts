@@ -1,44 +1,54 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, ChangeDetectionStrategy } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
-import { takeUntil } from 'rxjs/operators';
+import { Store } from '@ngrx/store';
+import { Actions, ofType } from '@ngrx/effects';
 import { Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
 
-import { ConferenceService } from '../../../core/services/conference.service';
 import { Conference } from '../../../core/models/conference.model';
+import { RootStoreState, ConferenceStoreActions } from '../../../root-store';
 
 @Component({
   selector: 'app-create',
+  changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './create.component.html',
   styleUrls: ['./create.component.css']
 })
 export class CreateComponent implements OnInit, OnDestroy {
-  conference: Conference;
-  errMessage: string;
-  private ngUnsubscribe = new Subject();
+  private ngUnsubscribe = new Subject<boolean>();
+  conference: Conference = {
+    name: null,
+    host_id: null
+  };
 
   constructor(
-    private conferenceService: ConferenceService,
     private router: Router,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private store$: Store<RootStoreState.State>,
+    private actions$: Actions
   ) {
   }
 
   ngOnInit() {
-    this.conference = this.conferenceService.getNewObject();
+    this.registerListeners();
   }
 
   ngOnDestroy() {
-    this.ngUnsubscribe.next();
+    this.ngUnsubscribe.next(true);
     this.ngUnsubscribe.complete();
   }
 
   onSave(conference: Conference): void {
-    this.conference = conference;
-    this.conferenceService.create(conference).pipe(takeUntil(this.ngUnsubscribe)).subscribe(conference => {
-      this.router.navigate(['../', conference.id.toString(10)], {relativeTo: this.route});
-    },
-    err => {
-      this.errMessage = 'Error creating conference. ' + err;
+    this.store$.dispatch(new ConferenceStoreActions.CreateAction(conference));
+  }
+
+  registerListeners(): void {
+    // Subscribe to CREATE_SUCCESS action
+    this.actions$.pipe(
+      ofType<ConferenceStoreActions.CreateSuccessAction>(ConferenceStoreActions.ActionTypes.CREATE_SUCCESS),
+      takeUntil(this.ngUnsubscribe)
+    ).subscribe(action => {
+      this.router.navigate(['../', action.payload.id.toString(10)], {relativeTo: this.route});
     });
   }
 

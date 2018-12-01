@@ -1,32 +1,35 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { Observable } from 'rxjs';
 import { Router, ActivatedRoute } from '@angular/router';
 import { PageEvent } from '@angular/material';
+import { Store } from '@ngrx/store';
 
-import { ConferenceService } from '../../../core/services/conference.service';
-import { Multiple } from '../../../core/models/multiple.model';
 import { Conference } from '../../../core/models/conference.model';
-import { AuthenticationService } from '../../../core/services/authentication.service';
+import { RootStoreState, ConferenceStoreActions, ConferenceStoreSelectors } from '../../../root-store';
+import { Page } from '../../../root-store/shared/page.model';
 
 @Component({
   selector: 'app-list',
+  changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './list.component.html',
   styleUrls: ['./list.component.css']
 })
 export class ListComponent implements OnInit {
-  conferences$: Observable<Multiple<Conference>>;
   columns: string[] = ['name', 'updatedAt'];
+  conferences$: Observable<Conference[]>;
+  page$: Observable<Page>;
 
   constructor(
-    private conferenceService: ConferenceService,
-    private authService: AuthenticationService,
     private router: Router,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private store$: Store<RootStoreState.State>
   ) {
   }
 
   ngOnInit() {
-    this.loadConferences(0);
+    this.conferences$ = this.store$.select(ConferenceStoreSelectors.selectAllConferenceItems);
+    this.page$ = this.store$.select(ConferenceStoreSelectors.selectConferencePage);
+    this.loadConferences(null); // Null signifies use page in store
   }
 
   selectConference(conference: Conference): void {
@@ -37,8 +40,10 @@ export class ListComponent implements OnInit {
     this.loadConferences(event.pageIndex);
   }
 
-  private loadConferences(page: number): void {
-    this.conferences$ = this.conferenceService.getMany(page, this.authService.getUser().id);
+  private loadConferences(pageIndex: number): void {
+    this.store$.dispatch(
+      new ConferenceStoreActions.LoadManyAction({pageIndex: pageIndex})
+    );
   }
 
 }

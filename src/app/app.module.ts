@@ -7,6 +7,7 @@ import { AppComponent } from './app.component';
 import { SharedModule } from './shared/shared.module';
 import { CoreModule } from './core/core.module';
 import { IndexComponent } from './index/index.component';
+import { RootStoreModule } from './root-store'
 
 @NgModule({
   declarations: [
@@ -18,7 +19,8 @@ import { IndexComponent } from './index/index.component';
     BrowserAnimationsModule,
     AppRoutingModule,
     SharedModule,
-    CoreModule.forRoot()
+    CoreModule.forRoot(),
+    RootStoreModule
   ],
   providers: [],
   bootstrap: [AppComponent]

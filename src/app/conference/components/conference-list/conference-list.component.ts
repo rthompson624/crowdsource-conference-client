@@ -1,15 +1,17 @@
-import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
+import { Component, OnInit, Input, Output, EventEmitter, ChangeDetectionStrategy } from '@angular/core';
 import { PageEvent } from '@angular/material';
-import { Multiple } from '../../../core/models/multiple.model';
 import { Conference } from '../../../core/models/conference.model';
+import { Page } from '../../../root-store/shared/page.model';
 
 @Component({
   selector: 'app-conference-list',
+  changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './conference-list.component.html',
   styleUrls: ['./conference-list.component.css']
 })
 export class ConferenceListComponent implements OnInit {
-  @Input() conferences: Multiple<Conference>;
+  @Input() conferences: Conference[];
+  @Input() pageInfo: Page;
   @Input() displayedColumns: string[];
   @Output() clickRow = new EventEmitter<Conference>();
   @Output() load = new EventEmitter<PageEvent>();

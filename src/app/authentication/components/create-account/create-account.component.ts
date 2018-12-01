@@ -1,13 +1,12 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators, ValidationErrors } from '@angular/forms';
 import { Router } from '@angular/router';
+import { Store } from '@ngrx/store';
+import { Actions, ofType } from '@ngrx/effects';
 import { takeUntil } from 'rxjs/operators';
-import { Subject } from 'rxjs';
+import { Subject, Observable } from 'rxjs';
 
-import { UserService } from '../../../core/services/user.service';
-import { User } from '../../../core/models/user.model';
-import { AuthenticationService } from '../../../core/services/authentication.service';
-import { AuthRequest } from '../../../core/models/auth-request.model';
+import { RootStoreState, AuthenticationStoreActions, AuthenticationStoreSelectors } from '../../../root-store';
 
 @Component({
   selector: 'app-create-account',
@@ -16,81 +15,60 @@ import { AuthRequest } from '../../../core/models/auth-request.model';
 })
 export class CreateAccountComponent implements OnInit, OnDestroy {
   accountForm: FormGroup;
-  errorMessage: string;
-  showSpinner: boolean = false;
-  accountCreationFailed: boolean = false;
-  authenticationFailed: boolean = false;
-  private ngUnsubscribe = new Subject();
+  isLoading$: Observable<boolean>;
+  error$: Observable<string>;
+  private ngUnsubscribe = new Subject<boolean>();
 
   constructor(
     private fb: FormBuilder,
-    private userService: UserService,
-    private authService: AuthenticationService,
-    private router: Router
+    private router: Router,
+    private store$: Store<RootStoreState.State>,
+    private actions$: Actions
   ) {
   }
 
   ngOnInit() {
     this.createaccountForm();
+    this.registerListeners();
+    this.isLoading$ = this.store$.select(AuthenticationStoreSelectors.selectIsLoading);
+    this.error$ = this.store$.select(AuthenticationStoreSelectors.selectError);
   }
 
   ngOnDestroy() {
-    this.ngUnsubscribe.next();
+    this.ngUnsubscribe.next(true);
     this.ngUnsubscribe.complete();
   }
 
   onSubmit(): void {
-    this.showSpinner = true;
-    this.accountCreationFailed = false;
-    this.authenticationFailed = false;
-    this.errorMessage = '';
-    const email = this.accountForm.controls['email'];
-    const password = this.accountForm.controls['password'];
-    const passwordEnterAgain = this.accountForm.controls['passwordEnterAgain'];
-    if (password.value != passwordEnterAgain.value) {
-      password.setValue('');
-      passwordEnterAgain.setValue('');
-      this.errorMessage = 'The passwords you entered did not match. Please try again.';
-      this.showSpinner = false;
-    } else {
-      // Create new user account
-      const user: User = {
-        email: email.value,
-        password: password.value
-      };
-      this.userService.create(user).pipe(takeUntil(this.ngUnsubscribe)).subscribe(newUser => {
-        // Account created. Now login and navigate to home page.
-        const authReq: AuthRequest = {
-          strategy: 'local',
-          email: email.value,
-          password: password.value
-        };
-        this.authService.authenticateUser(authReq).pipe(takeUntil(this.ngUnsubscribe)).subscribe(authRes => {
-          // Authentication successfull
-          this.showSpinner = false;
-          this.router.navigate(['/', 'conferences']);
-        },
-        err => {
-          // Authentication failed
-          if (err.error.message === 'Invalid login') {
-            this.errorMessage = 'No account exists for the email and password entered.'
-          } else {
-            this.errorMessage = err.error.message;
-            console.log(err);
-          }
-          this.showSpinner = false;
-          this.authenticationFailed = true;
-        });
-      },
-      err => {
-        // Account creation failed
-        if (err.error.errors[0].message === 'email must be unique') {
-          this.accountCreationFailed = true;
-          this.errorMessage = 'An account for this email already exists.';
-        }
-        this.showSpinner = false;
-      });
-    }
+    const email = <string>this.accountForm.controls['email'].value;
+    const password = <string>this.accountForm.controls['password'].value;
+    this.store$.dispatch(new AuthenticationStoreActions.CreateAccountRequestAction({
+      email: email,
+      password: password
+    }));
+  }
+
+  registerListeners(): void {
+    // Subscribe to CREATE_ACCOUNT_SUCCESS action
+    this.actions$.pipe(
+      ofType<AuthenticationStoreActions.CreateAccountSuccessAction>(AuthenticationStoreActions.ActionTypes.CREATE_ACCOUNT_SUCCESS),
+      takeUntil(this.ngUnsubscribe)
+    ).subscribe(action => {
+      // Log user in
+      const email = <string>this.accountForm.controls['email'].value;
+      const password = <string>this.accountForm.controls['password'].value;
+      this.store$.dispatch(new AuthenticationStoreActions.LoginRequestAction({
+        email: email,
+        password: password
+      }));
+    });
+    // Subscribe to LOGIN_SUCCESS action
+    this.actions$.pipe(
+      ofType<AuthenticationStoreActions.LoginSuccessAction>(AuthenticationStoreActions.ActionTypes.LOGIN_SUCCESS),
+      takeUntil(this.ngUnsubscribe)
+    ).subscribe(action => {
+      this.router.navigate(['/', 'conferences']);
+    });
   }
 
   private createaccountForm(): void {
@@ -99,8 +77,22 @@ export class CreateAccountComponent implements OnInit, OnDestroy {
         email: ['', [Validators.required, Validators.email]],
         password: ['', [Validators.required, Validators.minLength(6)]],
         passwordEnterAgain: ['', [Validators.required, Validators.minLength(6)]]
+      },
+      {
+        validator: this.validatePasswordConfirmation
       }
     );
+  }
+
+  validatePasswordConfirmation(fg: FormGroup): ValidationErrors {
+    const pw = fg.controls['password'];
+    const pw2 = fg.controls['passwordEnterAgain'];
+    if (pw.value !== pw2.value) {
+      pw2.setErrors({validatePasswordConfirmation: true});
+    } else {
+      pw2.setErrors(null);
+    }
+    return null; 
   }
 
 }

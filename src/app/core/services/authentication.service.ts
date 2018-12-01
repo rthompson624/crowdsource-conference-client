@@ -14,18 +14,8 @@ import { User } from '../models/user.model';
 })
 export class AuthenticationService {
   private authUrl: string = 'http://' + environment.restApiDomain + '/authentication';
-  private accessToken: string;
-  private user: User;
 
   constructor(private httpClient: HttpClient) {
-    if (!this.accessToken) {
-      // Check local storage
-      this.accessToken = this.retrieveInLocalStorage('accessToken');
-    }
-    if (!this.user) {
-      // Check local storage
-      this.user = JSON.parse(this.retrieveInLocalStorage('user'));
-    }
   }
 
   authenticateUser(authReq: AuthRequest): Observable<AuthResponse> {
@@ -34,16 +24,14 @@ export class AuthenticationService {
     return this.httpClient.post<AuthResponse>(this.authUrl, authReq, options).pipe(
       tap((authRes: AuthResponse) => {
         // Authentication succeeded
-        this.accessToken = authRes.accessToken;
-        this.saveInLocalStorage('accessToken', this.accessToken);
-        this.user = authRes.user;
-        this.saveInLocalStorage('user', JSON.stringify(this.user));
+        this.saveInLocalStorage('accessToken', authRes.accessToken);
+        this.saveInLocalStorage('user', JSON.stringify(authRes.user));
       })
     );
   }
 
   userIsAuthenticated(): boolean {
-    if (this.accessToken) {
+    if (this.getAccessToken()) {
       return true;
     } else {
       return false;
@@ -51,17 +39,15 @@ export class AuthenticationService {
   }
 
   getAccessToken(): string {
-    return this.accessToken;
+    return this.retrieveInLocalStorage('accessToken');
   }
 
   getUser(): User {
-    return this.user;
+    return JSON.parse(this.retrieveInLocalStorage('user'));
   }
 
   logoutUser(): void {
-    this.accessToken = null;
     this.deleteInLocalStorage('accessToken');
-    this.user = null;
     this.deleteInLocalStorage('user');
   }
 

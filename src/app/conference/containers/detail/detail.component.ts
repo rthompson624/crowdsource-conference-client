@@ -1,39 +1,44 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, ChangeDetectionStrategy } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { Observable, Subject } from 'rxjs';
+import { Observable } from 'rxjs';
 import { switchMap, takeUntil } from 'rxjs/operators';
+import { Store } from '@ngrx/store';
+import { Actions, ofType } from '@ngrx/effects';
+import { Subject } from 'rxjs';
 
-import { ConferenceService } from '../../../core/services/conference.service';
 import { Conference } from '../../../core/models/conference.model';
+import { RootStoreState, ConferenceStoreActions, ConferenceStoreSelectors } from '../../../root-store';
 
 @Component({
   selector: 'app-detail',
+  changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './detail.component.html',
   styleUrls: ['./detail.component.css']
 })
 export class DetailComponent implements OnInit, OnDestroy {
+  private ngUnsubscribe = new Subject<boolean>();
   conference$: Observable<Conference>;
-  private ngUnsubscribe = new Subject();
-  id: number;
 
   constructor(
-    private conferenceService: ConferenceService,
     private route: ActivatedRoute,
-    private router: Router
+    private router: Router,
+    private store$: Store<RootStoreState.State>,
+    private actions$: Actions
   ) {
   }
 
   ngOnInit() {
     this.conference$ = this.route.paramMap.pipe(
       switchMap(paramMap => {
-        this.id = parseInt(paramMap.get('id'));
-        return this.conferenceService.getOne(parseInt(paramMap.get('id')));
+        this.store$.dispatch(new ConferenceStoreActions.LoadOneAction({ id: parseInt(paramMap.get('id'))}));
+        return this.store$.select(ConferenceStoreSelectors.selectConferenceById(parseInt(paramMap.get('id'))));
       })
     );
+    this.registerListeners();
   }
 
   ngOnDestroy() {
-    this.ngUnsubscribe.next();
+    this.ngUnsubscribe.next(true);
     this.ngUnsubscribe.complete();
   }
 
@@ -42,7 +47,15 @@ export class DetailComponent implements OnInit, OnDestroy {
   }
 
   deleteConference(conference: Conference): void {
-    this.conferenceService.delete(conference).pipe(takeUntil(this.ngUnsubscribe)).subscribe(() => {
+    this.store$.dispatch(new ConferenceStoreActions.DeleteAction(conference));
+  }
+
+  registerListeners(): void {
+    // Subscribe to DELETE_SUCCESS action
+    this.actions$.pipe(
+      ofType<ConferenceStoreActions.DeleteSuccessAction>(ConferenceStoreActions.ActionTypes.DELETE_SUCCESS),
+      takeUntil(this.ngUnsubscribe)
+    ).subscribe(action => {
       this.router.navigate(['../'], {relativeTo: this.route});
     });
   }

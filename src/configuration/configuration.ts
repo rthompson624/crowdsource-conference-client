@@ -1,3 +1,6 @@
 export const AppConfiguration = {
-  apiPageSize: 8
+  apiPageSize: 8,
+  protectedRoutes: [
+    'conferences'
+  ]
 };

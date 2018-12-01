@@ -16,9 +16,9 @@
     <div class="row">
       <button type="submit" [disabled]="!accountForm.valid" mat-raised-button color="primary">Submit</button>
       <div class="spacer"></div>
-      <mat-spinner *ngIf="showSpinner" [diameter]="40"></mat-spinner>
+      <mat-spinner *ngIf="isLoading$ | async" [diameter]="40"></mat-spinner>
     </div>
     <br />
-    <div *ngIf="!accountForm.valid || accountCreationFailed || authenticationFailed" class="error-message">{{ errorMessage }}</div>
+    <div *ngIf="error$ | async" class="error-message">{{ error$ | async }}</div>
   </form>  
 </app-main-layout>
