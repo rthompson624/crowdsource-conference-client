@@ -1,7 +1,7 @@
 import { Component, OnInit, Input, Output, EventEmitter, ChangeDetectionStrategy } from '@angular/core';
 import { PageEvent } from '@angular/material';
 import { Conference } from '../../../core/models/conference.model';
-import { Page } from '../../../root-store/shared/page.model';
+import { Page } from '../../../core/models/page.model';
 
 @Component({
   selector: 'app-conference-list',

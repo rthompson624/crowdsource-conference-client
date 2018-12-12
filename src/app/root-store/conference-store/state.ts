@@ -1,6 +1,6 @@
 import { createEntityAdapter, EntityAdapter, EntityState } from '@ngrx/entity';
 import { Conference } from '../../core/models/conference.model';
-import { Page } from '../shared/page.model';
+import { Page } from '../../core/models/page.model';
 
 export const featureAdapter: EntityAdapter<Conference> = createEntityAdapter<Conference>({
   selectId: model => model.id,

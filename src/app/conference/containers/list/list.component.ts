@@ -6,7 +6,7 @@ import { Store } from '@ngrx/store';
 
 import { Conference } from '../../../core/models/conference.model';
 import { RootStoreState, ConferenceStoreActions, ConferenceStoreSelectors } from '../../../root-store';
-import { Page } from '../../../root-store/shared/page.model';
+import { Page } from '../../../core/models/page.model';
 
 @Component({
   selector: 'app-list',

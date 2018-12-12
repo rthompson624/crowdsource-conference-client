@@ -1,7 +1,7 @@
 import { createFeatureSelector, createSelector, MemoizedSelector } from '@ngrx/store';
 import { Conference } from '../../core/models/conference.model';
 import { featureAdapter, State } from './state';
-import { Page } from '../shared/page.model';
+import { Page } from '../../core/models/page.model';
 
 export const getPage = (state: State): Page => state.page;
 export const getError = (state: State): any => state.error;

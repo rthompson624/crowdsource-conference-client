@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, ChangeDetectionStrategy } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, ValidationErrors } from '@angular/forms';
 import { Router } from '@angular/router';
 import { Store } from '@ngrx/store';
@@ -10,6 +10,7 @@ import { RootStoreState, AuthenticationStoreActions, AuthenticationStoreSelector
 
 @Component({
   selector: 'app-create-account',
+  changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './create-account.component.html',
   styleUrls: ['./create-account.component.css']
 })
