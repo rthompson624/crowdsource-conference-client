@@ -5,6 +5,8 @@ import { takeUntil } from 'rxjs/operators';
 
 import { Conference } from '../../../core/models/conference.model';
 import { DeleteDialogComponent } from '../delete-dialog/delete-dialog.component';
+import { LocationService } from '../../../core/services/location.service';
+import { DateService } from '../../../core/services/date.service';
 
 @Component({
   selector: 'app-conference-detail',
@@ -19,7 +21,9 @@ export class ConferenceDetailComponent implements OnInit, OnDestroy {
   private ngUnsubscribe = new Subject<boolean>();
 
   constructor(
-    private dialog: MatDialog
+    private dialog: MatDialog,
+    public locationService: LocationService,
+    public dateService: DateService
   ) {
   }
 

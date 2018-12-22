@@ -1,6 +1,46 @@
-<form *ngIf="conference" [formGroup]="conferenceForm" (ngSubmit)="onSubmit()">
-  <mat-form-field>
+<form *ngIf="conference" [formGroup]="conferenceForm" (ngSubmit)="onSubmit()" class="app-form">
+  <mat-form-field class="app-ctrl-full-width">
     <input matInput placeholder="Name" formControlName="name" width="100%">
+  </mat-form-field>
+  <br />
+  <mat-form-field class="app-ctrl-full-width">
+    <input matInput placeholder="Tag line" formControlName="tagLine" width="100%">
+  </mat-form-field>
+  <br />
+  <mat-form-field class="app-ctrl-full-width">
+    <textarea matInput placeholder="Description" formControlName="description" width="100%" rows="3"></textarea>
+  </mat-form-field>
+  <br />
+  <mat-form-field>
+    <input matInput [matDatepicker]="startDate" placeholder="Start date" formControlName="startDate">
+    <mat-datepicker-toggle matSuffix [for]="startDate"></mat-datepicker-toggle>
+    <mat-datepicker #startDate></mat-datepicker>
+  </mat-form-field>
+  <br />
+  <mat-form-field>
+    <input matInput [matDatepicker]="endDate" placeholder="End date" formControlName="endDate">
+    <mat-datepicker-toggle matSuffix [for]="endDate"></mat-datepicker-toggle>
+    <mat-datepicker #endDate></mat-datepicker>
+  </mat-form-field>
+  <br />
+  <mat-form-field>
+    <input matInput placeholder="City" formControlName="city" width="100%">
+  </mat-form-field>
+  <br />
+  <mat-form-field>
+    <mat-select placeholder="State" formControlName="state">
+      <mat-option *ngFor="let state of locationService.getStates()" [value]="state.abbreviation">
+        {{state.name}}
+      </mat-option>
+    </mat-select>
+  </mat-form-field>
+  <br />
+  <mat-form-field>
+    <mat-select placeholder="Country" formControlName="country">
+      <mat-option *ngFor="let country of locationService.getCountries()" [value]="country.name">
+        {{country.name}}
+      </mat-option>
+    </mat-select>
   </mat-form-field>
   <br />
   <div class="row">

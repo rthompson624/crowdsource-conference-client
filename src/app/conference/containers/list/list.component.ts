@@ -15,7 +15,7 @@ import { Page } from '../../../core/models/page.model';
   styleUrls: ['./list.component.css']
 })
 export class ListComponent implements OnInit {
-  columns: string[] = ['name', 'updatedAt'];
+  columns: string[] = ['name', 'startDate', 'city'];
   conferences$: Observable<Conference[]>;
   page$: Observable<Page>;
 

@@ -2,6 +2,8 @@ import { Component, OnInit, Input, Output, EventEmitter, ChangeDetectionStrategy
 import { PageEvent } from '@angular/material';
 import { Conference } from '../../../core/models/conference.model';
 import { Page } from '../../../core/models/page.model';
+import { LocationService } from '../../../core/services/location.service';
+import { DateService } from '../../../core/services/date.service';
 
 @Component({
   selector: 'app-conference-list',
@@ -16,7 +18,10 @@ export class ConferenceListComponent implements OnInit {
   @Output() clickRow = new EventEmitter<Conference>();
   @Output() load = new EventEmitter<PageEvent>();
 
-  constructor() { }
+  constructor(
+    public locationService: LocationService,
+    public dateService: DateService
+  ) { }
 
   ngOnInit() {
   }
@@ -27,11 +32,6 @@ export class ConferenceListComponent implements OnInit {
 
   onPageEvent(event: PageEvent) {
     this.load.emit(event);
-  }
-
-  formatDate(value: string): string {
-    const date = new Date(value);
-    return date.toDateString();
   }
 
 }

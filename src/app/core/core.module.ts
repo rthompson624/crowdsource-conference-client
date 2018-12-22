@@ -2,11 +2,13 @@ import { ModuleWithProviders, NgModule, Optional, SkipSelf } from '@angular/core
 import { CommonModule } from '@angular/common';
 import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { SecurityInterceptor } from './services/security.interceptor';
+import { MatMomentDateModule } from '@angular/material-moment-adapter';
 
 @NgModule({
   imports: [
     CommonModule,
-    HttpClientModule
+    HttpClientModule,
+    MatMomentDateModule
   ],
   declarations: [],
   providers: [

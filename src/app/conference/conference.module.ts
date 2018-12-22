@@ -4,7 +4,7 @@ import { CommonModule } from '@angular/common';
 import {
   MatButtonModule, MatFormFieldModule, MatIconModule, MatInputModule, 
   MatProgressSpinnerModule, MatTableModule, MatCardModule, MatDialogModule,
-  MatPaginatorModule
+  MatPaginatorModule, MatDatepickerModule, MatSelectModule
 } from '@angular/material';
 
 import { ConferenceRoutingModule } from './conference-routing.module';
@@ -36,7 +36,9 @@ import { DeleteDialogComponent } from './components/delete-dialog/delete-dialog.
     ReactiveFormsModule,
     SharedModule,
     MatDialogModule,
-    MatPaginatorModule
+    MatPaginatorModule,
+    MatDatepickerModule,
+    MatSelectModule
   ],
   declarations: [
     ListComponent,

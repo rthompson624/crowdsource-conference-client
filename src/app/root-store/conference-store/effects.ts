@@ -24,8 +24,8 @@ export class ConferenceStoreEffects {
     withLatestFrom(this.store$),
     switchMap(([action, store]) => {
       let pageIndex = action.payload.pageIndex;
-      // If no page index supplied use what the store has
-      if (!pageIndex) {
+      // If page index is null use what the store has
+      if (pageIndex === null) {
         if (store.conference.page.skip) {
           pageIndex = store.conference.page.skip / store.conference.page.limit;
         } else {
